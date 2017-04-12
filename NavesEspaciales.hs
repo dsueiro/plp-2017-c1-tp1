@@ -89,7 +89,22 @@ pruebaDeFuego = undefined
 
 -- Ejercicio 8
 componentesPorNivel :: NaveEspacial -> Int -> Int
-componentesPorNivel = undefined
+componentesPorNivel = foldNave (\_ -> (\i -> if i == 0 then 1 else 0))
+	(\_ recu1 recu2 -> (\i -> if i == 0 then 1 else (recu1 (i-1)) + (recu2 (i-1))))
 
 dimensiones :: NaveEspacial -> (Int, Int)
-dimensiones = undefined
+dimensiones nave = (largo nave, ancho nave) 
+
+largo :: NaveEspacial -> Int
+largo = foldNave (\_ -> 1) (\_ recu1 recu2 -> (max recu1 recu2) + 1)
+
+ancho :: NaveEspacial -> Int
+ancho nave = maximoHastaCero [componentesPorNivel nave nivel | nivel <- [0..]]
+
+maximoHastaCero :: [Int] -> Int
+maximoHastaCero = foldr (\x recu -> if x == 0 then 0 else max x recu) 0
+
+{-dimensiones = foldNave (\_ -> (1, 1)) (\_ recu1 recu2 -> 
+	((max (fst recu1) (fst recu2)) + 1, (snd recu1) + (snd recu2)))
+al principio pense que ancho era otra cosa
+la dejo por las dudas ¯\_(ツ)_/¯ -}
