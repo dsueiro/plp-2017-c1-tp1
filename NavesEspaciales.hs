@@ -79,13 +79,16 @@ impactarAuxiliar (dir,lvl,tipo) (Módulo componente nave1 nave2) nivel direccion
 																					else 
 																						Módulo componente nave1 (impactarAuxiliar (dir,lvl,tipo) nave2  (nivel -1 ) direccion)
 
+
 -- Ejercicio 6
 maniobrar :: NaveEspacial -> [Peligro] -> NaveEspacial
-maniobrar = undefined
+maniobrar nave peligros = foldl (\recu x -> impactar x recu) nave peligros
+
+
 
 -- Ejercicio 7
 pruebaDeFuego :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
-pruebaDeFuego = undefined
+pruebaDeFuego peligros naves = foldr (\x recu -> (maniobrar x peligros) : recu) [] naves 
 
 -- Ejercicio 8
 componentesPorNivel :: NaveEspacial -> Int -> Int
