@@ -26,12 +26,13 @@ foldNave :: (Componente -> b) -> (Componente -> b -> b -> b) -> NaveEspacial -> 
 foldNave fBase fMod (Base componente) = fBase componente
 foldNave fBase fMod (Módulo componente nave1 nave2) = fMod componente (recu nave1) (recu nave2)
 														where recu = foldNave fBase fMod
+
 sonComponentesIguales :: Componente -> Componente -> Bool
 sonComponentesIguales c1 c2 = (c1 == c2)
 
 cantidadComponentesNave :: NaveEspacial -> Componente -> Int
-cantidadComponentesNave (Base componente) c = if sonComponentesIguales componente c then 1 else 0
-cantidadComponentesNave (Módulo componente nave1 nave2) c =  cantidadComponentesNave nave1 c + cantidadComponentesNave nave2 c + if sonComponentesIguales componente c then 1 else 0
+cantidadComponentesNave = foldNave 	(\c -> (\componente -> if sonComponentesIguales c componente then 1 else 0))
+									(\c nave1 nave2 -> (\componente -> nave1 componente + nave2 componente + if sonComponentesIguales c componente then 1 else 0))
 
 --Ejercicio 2
 capacidad :: NaveEspacial -> Int
@@ -42,8 +43,6 @@ poderDeAtaque nave = cantidadComponentesNave nave Cañón
 
 puedeVolar :: NaveEspacial -> Bool
 puedeVolar nave = (cantidadComponentesNave nave Motor ) > 0
---puedeVolar (Base componente) = sonComponentesIguales componente Motor
---puedeVolar (Módulo componente nave1 nave2) = sonComponentesIguales componente Motor || puedeVolar nave1 || puedeVolar nave2
 
 mismoPotencial :: NaveEspacial -> NaveEspacial -> Bool
 mismoPotencial nave1 nave2 = foldr (&&) True [ (cantidadComponentesNave nave1 y) == (cantidadComponentesNave nave2 y) | y<- [Contenedor , Motor , Escudo , Cañón] ] --, x1 <- cantidadComponentesNave nave1 y , x2 <- cantidadComponentesNave nave2 y ]
@@ -62,6 +61,8 @@ transformar :: (Componente -> Componente) -> NaveEspacial -> NaveEspacial
 transformar f (Base componente) = (Base (f componente))
 transformar f (Módulo componente nave1 nave2) = (Módulo (f componente) (recu nave1) (recu nave2))
 												where recu = transformar f
+
+--transformar f = foldNave (\c -> f c) (\c nave1 nave2 -> (f c) (nave1 f) (nave2 f))
 
 -- Ejercicio 5
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
