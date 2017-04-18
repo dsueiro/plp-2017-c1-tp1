@@ -58,11 +58,7 @@ transformarEnContenedor :: Componente -> Componente
 transformarEnContenedor c = Contenedor
 
 transformar :: (Componente -> Componente) -> NaveEspacial -> NaveEspacial
-transformar f (Base componente) = (Base (f componente))
-transformar f (Módulo componente nave1 nave2) = (Módulo (f componente) (recu nave1) (recu nave2))
-												where recu = transformar f
-
---transformar f = foldNave (\c -> f c) (\c nave1 nave2 -> (f c) (nave1 f) (nave2 f))
+transformar f = foldNave (\c -> Base (f c)) (\c nave1 nave2 -> Módulo (f c) nave1 nave2)
 
 -- Ejercicio 5
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
@@ -107,8 +103,3 @@ ancho nave = maximoHastaCero [componentesPorNivel nave nivel | nivel <- [0..]]
 
 maximoHastaCero :: [Int] -> Int
 maximoHastaCero = foldr (\x recu -> if x == 0 then 0 else max x recu) 0
-
-{-dimensiones = foldNave (\_ -> (1, 1)) (\_ recu1 recu2 -> 
-	((max (fst recu1) (fst recu2)) + 1, (snd recu1) + (snd recu2)))
-al principio pense que ancho era otra cosa
-la dejo por las dudas ¯\_(ツ)_/¯ -}
