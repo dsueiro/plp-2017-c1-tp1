@@ -101,6 +101,7 @@ testsEj6 = test [
   ]
 
 testsEj7 = test [
+  [superProtegido, nave9] ~=? pruebaDeFuego [(Babor, 1, Grande), (Estribor, 1, Grande), (Babor, 1, Pequeño), (Estribor, 1, Pequeño)] [superProtegido, nave9],
   [nave9, Módulo Escudo contenedorSolo (Módulo Escudo (Base Motor) (Base Cañón))] ~=? pruebaDeFuego [(Babor, 1, Grande), (Estribor, 1, Grande)] [nave9, protegidoNivel1Estribor, desbalanceado, Módulo Escudo contenedorSolo (Módulo Escudo (Base Motor) (Base Cañón))],
   3 ~=? length (pruebaDeFuego [(Babor,1,Grande),(Babor,2,Torpedo),(Estribor, 1, Pequeño)] [nave1,nave2,nave3,nave4,nave5,nave6,nave7,nave8,nave9])
   ]

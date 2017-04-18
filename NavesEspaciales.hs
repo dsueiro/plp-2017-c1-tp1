@@ -45,7 +45,7 @@ puedeVolar :: NaveEspacial -> Bool
 puedeVolar nave = (cantidadComponentesNave nave Motor ) > 0
 
 mismoPotencial :: NaveEspacial -> NaveEspacial -> Bool
-mismoPotencial nave1 nave2 = foldr (&&) True [ (cantidadComponentesNave nave1 y) == (cantidadComponentesNave nave2 y) | y<- [Contenedor , Motor , Escudo , Cañón] ] --, x1 <- cantidadComponentesNave nave1 y , x2 <- cantidadComponentesNave nave2 y ]
+mismoPotencial nave1 nave2 = and [(cantidadComponentesNave nave1 c) == (cantidadComponentesNave nave2 c) | c <- [Contenedor, Motor, Escudo, Cañón] ]
 
 --Ejercicio 3
 
@@ -61,6 +61,12 @@ transformar :: (Componente -> Componente) -> NaveEspacial -> NaveEspacial
 transformar f = foldNave (\c -> Base (f c)) (\c nave1 nave2 -> Módulo (f c) nave1 nave2)
 
 -- Ejercicio 5
+
+{- no se puede usar foldNave en este caso porque el peligro no se aplica recursivamente a las dos
+subnaves, que es la idea de foldNave
+en cambio, lo que pasa es que si el peligro viene de Babor se aplica sobre la subnave izquierda
+y si viene de Estribor, sobre la subnave derecha. -}
+
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
 impactar (dir, lvl, tipo) (Base componente) = 
 	if lvl == 0 then
@@ -78,7 +84,7 @@ impactar (dir, lvl, tipo) (Módulo componente nave1 nave2) =
 		else Módulo componente nave1 (impactar (dir, lvl-1, tipo) nave2))
 
 protegido :: NaveEspacial -> Bool
-protegido n = (cantidadComponentesNave n Cañón) > 0
+protegido n = (poderDeAtaque n) > 0
 
 -- Ejercicio 6
 maniobrar :: NaveEspacial -> [Peligro] -> NaveEspacial
@@ -89,10 +95,10 @@ maniobrar nave peligros = foldl (\recu x -> impactar x recu) nave peligros
 -- para este ejercicio devolvemos las naves que sobreviven en el estado
 -- posterior a haber pasado por los peligros
 pruebaDeFuego :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
-pruebaDeFuego peligros naves = filter (\n -> (cantidadComponentesNave n Motor) > 0) (despuesDeManiobrar peligros naves)
+pruebaDeFuego peligros naves = filter (\n -> puedeVolar n) (despuesDeManiobrar peligros naves)
 
 despuesDeManiobrar :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
-despuesDeManiobrar peligros = foldr (\x recu -> (maniobrar x peligros) : recu) []
+despuesDeManiobrar peligros = map (\n -> maniobrar n peligros)
 
 -- Ejercicio 8
 componentesPorNivel :: NaveEspacial -> Int -> Int
@@ -109,4 +115,7 @@ ancho :: NaveEspacial -> Int
 ancho nave = maximoHastaCero [componentesPorNivel nave nivel | nivel <- [0..]]
 
 maximoHastaCero :: [Int] -> Int
+-- devuelve el máximo de la ĺista considerada hasta el primer cero que aparece adentro
+-- el objetivo es poder pasarle la lista de componentesPorNivel que es infinita pero en algun momento 
+-- empieza a valer cero
 maximoHastaCero = foldr (\x recu -> if x == 0 then 0 else max x recu) 0
