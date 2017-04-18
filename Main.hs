@@ -64,15 +64,20 @@ testsEj4 = test [
   ]
 
 testsEj5 = test [
-  0 ~=? 0 --Cambiar esto por tests verdaderos.
+  nave2 ~=? impactar (Babor, 1, Pequeño) nave2,
+  Módulo Cañón (Base Escudo) (Base Contenedor) ~=? impactar (Estribor, 1, Pequeño) nave2,
+  Base Contenedor ~=? impactar (Babor, 0, Pequeño) nave1,
+  nave1 ~=? impactar (Babor, 1, Pequeño) nave1,
+  Módulo Contenedor (Base Contenedor) (Módulo Motor (Base Escudo) (Base Cañón)) ~=? impactar (Babor, 1, Pequeño) nave4
   ]
 
 testsEj6 = test [
-  0 ~=? 0 --Cambiar esto por tests verdaderos.
+  Módulo Contenedor (Base Contenedor) (Módulo Motor (Base Escudo) (Base Contenedor)) ~=? maniobrar nave4 [(Babor, 2, Pequeño), (Babor, 1, Pequeño), (Estribor, 2, Grande)]
   ]
 
 testsEj7 = test [
-  [nave1,nave3,nave9] ~=? pruebaDeFuego [(Babor,1,Grande),(Babor,2,Torpedo),(Estribor, 1, Pequeño)] [nave1,nave2,nave3,nave4,nave5,nave6,nave7,nave8,nave9]
+  
+  3 ~=? length (pruebaDeFuego [(Babor,1,Grande),(Babor,2,Torpedo),(Estribor, 1, Pequeño)] [nave1,nave2,nave3,nave4,nave5,nave6,nave7,nave8,nave9])
   ]
 
 testsEj8 = test [

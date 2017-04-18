@@ -62,30 +62,37 @@ transformar f = foldNave (\c -> Base (f c)) (\c nave1 nave2 -> Módulo (f c) nav
 
 -- Ejercicio 5
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
-impactar (dir,lvl,tipo) nave = impactarAuxiliar (dir,lvl,tipo) nave lvl dir
+impactar (dir, lvl, tipo) (Base componente) = 
+	if lvl == 0 then
+		(if tipo == Pequeño && componente == Escudo 
+			then Base Escudo
+			else Base Contenedor)
+	else (Base componente)
+impactar (dir, lvl, tipo) (Módulo componente nave1 nave2) =
+	if lvl == 0 then
+		(if (tipo == Pequeño && componente == Escudo) || (tipo == Grande && componente == Escudo && (protegido nave1 || protegido nave2))
+			then Módulo componente nave1 nave2
+			else Base Contenedor)
+	else (if dir == Babor
+		then Módulo componente (impactar (dir, lvl-1, tipo) nave1) nave2
+		else Módulo componente nave1 (impactar (dir, lvl-1, tipo) nave2))
 
-impactarAuxiliar :: Peligro -> NaveEspacial -> Int -> Dirección -> NaveEspacial
-impactarAuxiliar (dir,lvl,tipo) (Base componente) nivel direccion = if nivel == 0 
-																	then  	(if tipo == Pequeño && componente == Escudo 
-																				then (Base componente) 
-																				else (Base Contenedor)
-																			) 
-																	else (Base componente)
-impactarAuxiliar (dir,lvl,tipo) (Módulo componente nave1 nave2) nivel direccion = 	if direccion == Babor then
-																						Módulo componente (impactarAuxiliar (dir,lvl,tipo) nave1  (nivel -1 ) direccion) nave2
-																					else 
-																						Módulo componente nave1 (impactarAuxiliar (dir,lvl,tipo) nave2  (nivel -1 ) direccion)
-
+protegido :: NaveEspacial -> Bool
+protegido n = (cantidadComponentesNave n Cañón) > 0
 
 -- Ejercicio 6
 maniobrar :: NaveEspacial -> [Peligro] -> NaveEspacial
 maniobrar nave peligros = foldl (\recu x -> impactar x recu) nave peligros
 
-
-
 -- Ejercicio 7
+
+-- para este ejercicio devolvemos las naves que sobreviven en el estado
+-- posterior a haber pasado por los peligros
 pruebaDeFuego :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
-pruebaDeFuego peligros naves = foldr (\x recu -> (maniobrar x peligros) : recu) [] naves 
+pruebaDeFuego peligros naves = filter (\n -> (cantidadComponentesNave n Motor) > 0) (despuesDeManiobrar peligros naves)
+
+despuesDeManiobrar :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
+despuesDeManiobrar peligros = foldr (\x recu -> (maniobrar x peligros) : recu) []
 
 -- Ejercicio 8
 componentesPorNivel :: NaveEspacial -> Int -> Int
