@@ -62,26 +62,40 @@ transformar f = foldNave (\c -> Base (f c)) (\c nave1 nave2 -> Módulo (f c) nav
 
 -- Ejercicio 5
 
-{- no se puede usar foldNave en este caso porque el peligro no se aplica recursivamente a las dos
-subnaves, que es la idea de foldNave
-en cambio, lo que pasa es que si el peligro viene de Babor se aplica sobre la subnave izquierda
-y si viene de Estribor, sobre la subnave derecha. -}
+{- 
+No se puede usar foldNave en este caso porque el peligro no se aplica recursivamente
+a las dos subnaves, que es la idea de foldNave. En cambio, lo que pasa es que si el
+peligro viene de Babor se aplica sobre la subnave izquierda y si viene de Estribor,
+sobre la subnave derecha. 
+
+En este ejercicio entendimos que si un peligro viene de babor pero le pasa por abajo
+a la subnave izquierda entonces debería impactar contra la subnave derecha (si le da
+el nivel); y lo mismo con los peligros que vienen de estribor.
+-}
 
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
 impactar (dir, lvl, tipo) (Base componente) = 
-	if lvl == 0 then
-		(if tipo == Pequeño && componente == Escudo 
+	if lvl == 0
+		then (if tipo == Pequeño && componente == Escudo 
 			then Base Escudo
 			else Base Contenedor)
-	else (Base componente)
+		else (Base componente)
+
 impactar (dir, lvl, tipo) (Módulo componente nave1 nave2) =
-	if lvl == 0 then
-		(if (tipo == Pequeño && componente == Escudo) || (tipo == Grande && componente == Escudo && (protegido nave1 || protegido nave2))
+	if lvl == 0
+		then (if (tipo == Pequeño && componente == Escudo) || (tipo == Grande && componente == Escudo && (protegido nave1 || protegido nave2))
 			then Módulo componente nave1 nave2
 			else Base Contenedor)
-	else (if dir == Babor
-		then Módulo componente (impactar (dir, lvl-1, tipo) nave1) nave2
-		else Módulo componente nave1 (impactar (dir, lvl-1, tipo) nave2))
+		else (if dir == Babor
+			then (if largo nave1 >= lvl
+				then impactarSubnaveIzquierda
+				else impactarSubnaveDerecha)
+			else (if largo nave2 >= lvl
+				then impactarSubnaveDerecha
+				else impactarSubnaveIzquierda))
+	where 
+		impactarSubnaveIzquierda = Módulo componente (impactar (dir, lvl-1, tipo) nave1) nave2
+		impactarSubnaveDerecha = Módulo componente nave1 (impactar (dir, lvl-1, tipo) nave2)
 
 protegido :: NaveEspacial -> Bool
 protegido n = (poderDeAtaque n) > 0
@@ -92,8 +106,11 @@ maniobrar nave peligros = foldl (\recu x -> impactar x recu) nave peligros
 
 -- Ejercicio 7
 
-{- para este ejercicio devolvemos las naves que sobreviven en el estado
-posterior a haber pasado por los peligros -}
+{-
+para este ejercicio devolvemos las naves que sobreviven en el estado
+posterior a haber pasado por los peligros
+-}
+
 pruebaDeFuego :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
 pruebaDeFuego peligros naves = filter (\n -> puedeVolar n) (despuesDeManiobrar peligros naves)
 
@@ -114,8 +131,11 @@ largo = foldNave (\_ -> 1) (\_ recu1 recu2 -> (max recu1 recu2) + 1)
 ancho :: NaveEspacial -> Int
 ancho nave = maximoHastaCero [componentesPorNivel nave nivel | nivel <- [0..]]
 
-{- devuelve el máximo de la lista considerada hasta el primer cero que aparece adentro
-el objetivo es poder pasarle la lista de componentesPorNivel que es infinita pero en algun momento 
-empieza a valer cero -}
+{-
+maximoHastaCero devuelve el máximo de la lista considerada hasta el primer cero que
+aparece adentro. El objetivo es poder pasarle la lista de componentesPorNivel que es
+infinita pero en algún momento empieza a valer cero.
+-}
+
 maximoHastaCero :: [Int] -> Int
 maximoHastaCero = foldr (\x recu -> if x == 0 then 0 else max x recu) 0

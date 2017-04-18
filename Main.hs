@@ -90,7 +90,9 @@ testsEj5 = test [
   protegidoNivel1Estribor ~=? impactar (Estribor, 1, Grande) protegidoNivel1Estribor,
   Módulo Contenedor (Base Motor) (Base Contenedor) ~=? impactar (Estribor, 1, Torpedo) protegidoNivel1Estribor,
   contenedorSolo ~=? impactar (Babor, 0, Grande) escudoSinCañon,
-  escudoSinCañon ~=? impactar (Babor, 0, Pequeño) escudoSinCañon
+  escudoSinCañon ~=? impactar (Babor, 0, Pequeño) escudoSinCañon,
+  -- caso con el peligro pasando por debajo de la subnave derecha
+  Módulo Contenedor (Módulo Contenedor nave2 contenedorSolo) nave1 ~=? impactar (Estribor, 2, Pequeño) nave6
   ]
 
 testsEj6 = test [
