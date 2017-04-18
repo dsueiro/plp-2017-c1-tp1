@@ -31,8 +31,8 @@ sonComponentesIguales :: Componente -> Componente -> Bool
 sonComponentesIguales c1 c2 = (c1 == c2)
 
 cantidadComponentesNave :: NaveEspacial -> Componente -> Int
-cantidadComponentesNave = foldNave 	(\c -> (\componente -> if sonComponentesIguales c componente then 1 else 0))
-									(\c nave1 nave2 -> (\componente -> nave1 componente + nave2 componente + if sonComponentesIguales c componente then 1 else 0))
+cantidadComponentesNave = foldNave (\c -> (\componente -> if sonComponentesIguales c componente then 1 else 0))
+	(\c nave1 nave2 -> (\componente -> nave1 componente + nave2 componente + if sonComponentesIguales c componente then 1 else 0))
 
 --Ejercicio 2
 capacidad :: NaveEspacial -> Int
@@ -92,8 +92,8 @@ maniobrar nave peligros = foldl (\recu x -> impactar x recu) nave peligros
 
 -- Ejercicio 7
 
--- para este ejercicio devolvemos las naves que sobreviven en el estado
--- posterior a haber pasado por los peligros
+{- para este ejercicio devolvemos las naves que sobreviven en el estado
+posterior a haber pasado por los peligros -}
 pruebaDeFuego :: [Peligro] -> [NaveEspacial] -> [NaveEspacial]
 pruebaDeFuego peligros naves = filter (\n -> puedeVolar n) (despuesDeManiobrar peligros naves)
 
@@ -114,8 +114,8 @@ largo = foldNave (\_ -> 1) (\_ recu1 recu2 -> (max recu1 recu2) + 1)
 ancho :: NaveEspacial -> Int
 ancho nave = maximoHastaCero [componentesPorNivel nave nivel | nivel <- [0..]]
 
+{- devuelve el máximo de la lista considerada hasta el primer cero que aparece adentro
+el objetivo es poder pasarle la lista de componentesPorNivel que es infinita pero en algun momento 
+empieza a valer cero -}
 maximoHastaCero :: [Int] -> Int
--- devuelve el máximo de la ĺista considerada hasta el primer cero que aparece adentro
--- el objetivo es poder pasarle la lista de componentesPorNivel que es infinita pero en algun momento 
--- empieza a valer cero
 maximoHastaCero = foldr (\x recu -> if x == 0 then 0 else max x recu) 0

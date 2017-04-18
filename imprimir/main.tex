@@ -1,0 +1,55 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{calc}
+\usepackage{caratula}
+\usepackage{marvosym} % para \Faxmachine !
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{algpseudocode}
+\usepackage{multicol}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{imagenes/}}
+%\sloppy
+\parskip=5pt % 10pt es el tamano de fuente
+
+\usepackage{stringenc}
+\usepackage{pdfescape}
+\usepackage{listings}
+\lstset{
+	extendedchars=true,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1,
+    basicstyle=\ttfamily\small,
+    tabsize=2,
+    breaklines=true,
+    breakatwhitespace=true,
+}
+
+
+\begin{document}
+\title{PLP - TP1}
+\materia{Paradigmas de Lenguajes de Programación}
+\submateria{Primer cuatrimestre 2017}
+\titulo{}
+\subtitulo{TP1}
+\grupo{Grupo: Pescado Ravioloso}
+\integrante{Alejandro González}{...}{gonzalezalejandro1592@gmail.com}
+\integrante{Diego Sueiro}{75/90}{dsueiro@gmail.com}
+\integrante{Malena Ivnisky}{421/12}{malenaivnisky@gmail.com}
+
+\maketitle
+
+\newpage
+
+\subsection{Código}
+\lstinputlisting[language=Haskell, firstline=24, lastline=122]{../NavesEspaciales.hs}
+
+\subsection{Tests}
+\lstinputlisting[language=Haskell, firstline=53, lastline=124]{../Main.hs}
+
+\end{document}
